@@ -133,29 +133,27 @@ class ClientBase implements Runnable {
         HttpUriRequest request = HttpConstants.constructRequest(host, endpoint, auth);
         if (request != null) {
           String postContent = null;
-          if (endpoint.getHttpMethod().equalsIgnoreCase(HttpConstants.HTTP_POST)) {
-            postContent = endpoint.getPostParamString();
-          }else if(endpoint.getHttpMethod().equalsIgnoreCase(HttpConstants.HTTP_GET)){
+          if( isPostRequest() ) {
             endpoint.getQueryParamString();
           }
 
+          // Set the auth headers (OAuth implementation makes a lot of assumptions while basic auth does not...)
           auth.signRequest(request, postContent);
           Connection conn = new Connection(client, processor);
           StatusLine status = establishConnection(conn, request);
-          if (handleConnectionResult(status)) {
+
+          // If we have a successful connection, track stream rate until interrupted
+          boolean successfulConnection = handleConnectionResult(status);
+          if (successfulConnection) {
             rateTracker.resume();
+            // This is where we handle the data
             processConnectionData(conn);
             rateTracker.pause();
           }
           logger.info("{} Done processing, preparing to close connection", name);
           conn.close();
         } else {
-          addEvent(
-            new Event(
-              EventType.CONNECTION_ERROR,
-              String.format("Error creating request: %s, %s, %s", endpoint.getHttpMethod(), host, endpoint.getURI())
-            )
-          );
+          handleNullRequest(host);
         }
       }
     } catch (Throwable e) {
@@ -215,6 +213,7 @@ class ClientBase implements Runnable {
       return true;
     }
 
+    // Failed connections parsing
     logger.warn(name + " Error connecting w/ status code - {}, reason - {}", statusCode, statusLine.getReasonPhrase());
     statsReporter.incrNumConnectionFailures();
     addEvent(new HttpResponseEvent(EventType.HTTP_ERROR, statusLine));
@@ -355,4 +354,17 @@ class ClientBase implements Runnable {
   public StatsReporter.StatsTracker getStatsTracker() {
     return statsReporter.getStatsTracker();
   }
+
+  private void handleNullRequest(String host) {
+    addEvent(
+            new Event(
+                    EventType.CONNECTION_ERROR,
+                    String.format("Error creating request: %s, %s, %s", endpoint.getHttpMethod(), host, endpoint.getURI())
+            )
+    );
+  }
+
+  private boolean isGetRequest() { return endpoint.getHttpMethod().equalsIgnoreCase(HttpConstants.HTTP_GET); }
+
+  private boolean isPostRequest() { return endpoint.getHttpMethod().equalsIgnoreCase(HttpConstants.HTTP_POST); }
 }
