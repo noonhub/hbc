@@ -135,7 +135,10 @@ class ClientBase implements Runnable {
           String postContent = null;
           if (endpoint.getHttpMethod().equalsIgnoreCase(HttpConstants.HTTP_POST)) {
             postContent = endpoint.getPostParamString();
+          }else if(endpoint.getHttpMethod().equalsIgnoreCase(HttpConstants.HTTP_GET)){
+            endpoint.getQueryParamString();
           }
+
           auth.signRequest(request, postContent);
           Connection conn = new Connection(client, processor);
           StatusLine status = establishConnection(conn, request);

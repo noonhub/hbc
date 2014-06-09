@@ -78,6 +78,13 @@ public class EndpointTest {
   }
 
   @Test
+  public void testPowerTrackEndpoint() {
+    PowerTrackEndpoint endpoint = new PowerTrackEndpoint("account", "label");
+
+
+  }
+
+  @Test
   public void testLanguages() {
     DefaultStreamingEndpoint endpoint = new StatusesFilterEndpoint();
     endpoint.languages(Lists.newArrayList("en", "de"));
