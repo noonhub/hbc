@@ -1,6 +1,11 @@
 # Hosebird Client (hbc) [![Build Status](https://travis-ci.org/twitter/hbc.png?branch=master)](https://travis-ci.org/twitter/hbc)
 A Java HTTP client for consuming Twitter's [Streaming API](https://dev.twitter.com/docs/streaming-apis)
 
+## Todos
+- [ ] refactor assumptions made based on auth type
+- [ ] refactor assumptions made based on http verb
+- [ ] add endpoints for GNIP services
+ 
 ## Features
 * GZip support
 * OAuth support
@@ -248,4 +253,3 @@ send a [pull request](https://github.com/twitter/hbc/pulls).
 Copyright 2013 Twitter, Inc.
 
 Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
-
