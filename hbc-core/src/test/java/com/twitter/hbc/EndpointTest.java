@@ -79,9 +79,9 @@ public class EndpointTest {
 
   @Test
   public void testPowerTrackEndpoint() {
-    PowerTrackEndpoint endpoint = new PowerTrackEndpoint("account", "label");
-
-
+    PowerTrackEndpoint endpoint = new PowerTrackEndpoint("account", "label", true);
+    String actual = "https://stream.gnip.com:443/accounts/account/publishers/twitter/streams/track/label.json";
+    assertEquals(endpoint.getURI(), actual);
   }
 
   @Test
