@@ -87,4 +87,14 @@ public class RawEndpoint implements StreamingEndpoint {
   public void removePostParameter(String param) {
     postParams.remove(UrlCodec.encode(param));
   }
+
+  @Override
+  public String getQueryParamString() {
+    return "";
+  }
+
+  @Override
+  public void addQueryParameter(String param, String value) {
+
+  }
 }

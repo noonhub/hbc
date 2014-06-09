@@ -1,15 +1,19 @@
 package com.twitter.hbc.core.endpoint;
 
-public class PowerTrackEndpoint implements StreamingEndpoint {
-  public static final String BASE_PATH = "/accounts/%s/publishers/twitter/streams/track/%s.json";
-  private final String account;
-  private final String label;
+import com.twitter.hbc.core.HttpConstants;
+
+public class PowerTrackEndpoint extends BaseEnterpriseStreamingEndpoint implements StreamingEndpoint {
+  private static final String BASE_PATH = "https://stream.gnip.com:%d/accounts/%s/publishers/twitter/streams/track/%s.json";
+  private static final int PORT = HttpConstants.DEFAULT_HTTPS_PORT;
   private boolean backfillable;
-  private int clientId;
+
+  public PowerTrackEndpoint(int clientId, String account, String label, boolean backfillable) {
+    super(clientId, account, label);
+    this.backfillable = backfillable;
+  }
 
   public PowerTrackEndpoint(String account, String label, boolean backfillable) {
-    this.account = account;
-    this.label = label;
+    super(0, account, label);
     this.backfillable = backfillable;
   }
 
@@ -19,7 +23,7 @@ public class PowerTrackEndpoint implements StreamingEndpoint {
 
   @Override
   public String getURI() {
-    return String.format(BASE_PATH, account.trim(), label.trim());
+    return String.format(BASE_PATH, PORT,account.trim(), label.trim());
   }
 
   @Override
@@ -29,7 +33,7 @@ public class PowerTrackEndpoint implements StreamingEndpoint {
 
   @Override
   public String getPostParamString() {
-    return null;
+    return "";
   }
 
   @Override
@@ -40,6 +44,16 @@ public class PowerTrackEndpoint implements StreamingEndpoint {
   @Override
   public void removePostParameter(String param) {
     //No-op
+  }
+
+  @Override
+  public String getQueryParamString() {
+    return "";
+  }
+
+  @Override
+  public void addQueryParameter(String param, String value) {
+
   }
 
   @Override
